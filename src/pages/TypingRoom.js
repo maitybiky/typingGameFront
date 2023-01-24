@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -20,26 +20,27 @@ export default function TypingRoom() {
   let randsen = randomSentence();
   let wordnum = randsen.split(" ");
   console.log("first", wordnum);
-  const [sent, setSent] = React.useState(Array.from(randsen));
-  const [accur, setaccur] = React.useState(0);
-  const [key, setKey] = React.useState();
-  const [totalkey, setTotalKey] = React.useState([]);
-  const [remoteSent, setRemoteSent] = React.useState([]);
-  const [start, setStart] = React.useState(false);
-  const [second, setScond] = React.useState(0);
-  const [oppReady, setOppReady] = React.useState(false);
-  const [meReady, setMeReady] = React.useState(false);
-  const [remoteUserData, setRemoteData] = React.useState();
-  const [remoteResult, setRemoteResult] = React.useState();
-  const [myResult, setMyResult] = React.useState();
+  const [sent, setSent] = useState(Array.from(randsen));
+  const [accur, setaccur] = useState(0);
+  const [key, setKey] = useState();
+  const [totalkey, setTotalKey] = useState([]);
+  const [remoteSent, setRemoteSent] = useState([]);
+  const [start, setStart] = useState(false);
+  const [second, setScond] = useState(0);
+  const [oppReady, setOppReady] = useState(false);
+  const [meReady, setMeReady] = useState(false);
+  const [remoteUserData, setRemoteData] = useState();
+  const [remoteResult, setRemoteResult] = useState();
+  const [myResult, setMyResult] = useState();
+  let rname;
   console.log("Array.from(te");
-  React.useEffect(() => {
-    
+  useEffect(() => {
     socket = io("http://localhost:4000");
     socket.emit("join_room", { location, sent });
     socket.on("join-alert", (data) => {
       setSent(data.sent);
       setRemoteData(data.location);
+      rname=data.location.name
       toast(data.location.name + " joined!!!");
     });
     socket.on("remoteType", (data) => {
@@ -55,7 +56,7 @@ export default function TypingRoom() {
       setRemoteResult(data);
     });
     socket.on("dis", () => {
-      toast.error(remoteUserData?.name + " has left !!!");
+      toast.error(rname + " has left !!!");
     });
     return () => {
       // socket.emit("disconnect");
@@ -64,6 +65,7 @@ export default function TypingRoom() {
   }, []);
 
   const handleType = (e) => {
+    window.scrollTo(0, 0);
     let i = e.target.value;
     let arr = [...totalkey];
     arr.push(i);
@@ -97,20 +99,6 @@ export default function TypingRoom() {
       };
       socket.emit("result", resii);
       setMyResult(resii);
-      //   navigate("/score", {
-      //     state: {
-      //       score: `Score ${(100 - (res.length / sent.length) * 100).toFixed(
-      //         1
-      //       )}%`,
-      //       acc: `Accuracy ${(100 - (accur / sent.length) * 100).toFixed(2)}%`,
-      //       speed: `Speed ${((wordnum.length / second) * 60).toFixed(
-      //         2
-      //       )} word/min`,
-      //     },
-      //   });
-      //   toast(`Score ${(100 - (res.length / sent.length) * 100).toFixed(1)}%`);
-      //   toast(`Accuracy ${100 - (accur / sent.length) * 100}%`);
-      //   toast(`Speed ${(wordnum.length / second) * 60} word/min`);
     }
   };
   const [cnt, setCnt] = React.useState(false);
@@ -218,6 +206,7 @@ export default function TypingRoom() {
                 handleType(e);
               }
             }}
+           
             fullWidth
             id="fullWidth"
             onKeyPress={handleEnter}

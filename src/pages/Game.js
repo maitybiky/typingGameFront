@@ -24,7 +24,7 @@ const Game = () => {
         sx={{
           minWidth: 275,
           margin: 10,
-          backgroundColor: "rgba(256, 256, 256, 0.1)",
+          // backgroundColor: "rgba(256, 256, 256, 0.1)",
         }}
       >
         <h1 className="anton">Join typing race</h1>
@@ -34,13 +34,21 @@ const Game = () => {
             sx={{ marginBottom: 5, }}
             id="standard-basic"
             label="Name"
+          
             variant="standard"
+             inputProps={{
+              // style: { WebkitBoxShadow: "0 0 0 1000px white inset" },
+            }}
           />
           <TextField
             onChange={(e) => setData({ ...data, room: e.target.value })}
             id="standard-basic"
             label="Id"
             variant="standard"
+            
+             inputProps={{
+              // style: { WebkitBoxShadow: "0 0 0 1000px white inset" },
+            }}
           />
           <br />
           <Button
